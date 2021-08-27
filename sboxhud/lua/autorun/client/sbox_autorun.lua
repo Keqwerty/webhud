@@ -7,7 +7,7 @@ function drawhudikgovno()
         position: absolute;
         left: 72px;
         top: 85%;
-        width: 529px;
+        width: 540px;
         height: 100px;
         background-color: rgba(32, 30, 34, 0.85);
         mix-blend-mode: normal;
@@ -132,12 +132,26 @@ function drawhudikgovno()
         end
         self:RunJavascript([[document.getElementById("name").innerHTML = "]] .. tostring(ply:Nick()) .. [[";]])
         local weap = ply:GetActiveWeapon()
-        if IsValid(weap) and weap:Clip1() != -1 then
-            self:RunJavascript([[document.getElementById("weaponpic").style.display = 'block';]])
-            self:RunJavascript([[document.getElementById("ammo").innerHTML = "| ]] .. tostring(weap:Clip1()) .. [[/]]..tostring(ply:GetAmmoCount( weap:GetPrimaryAmmoType() ))..[[";]])
-        else
-            self:RunJavascript([[document.getElementById("weaponpic").style.display = 'none';]])
-            self:RunJavascript([[document.getElementById("ammo").innerHTML = "";]])
+        local zalupa = {
+            weapon_rpg = true,
+            weapon_frag = true
+        }
+        local eblan = { weapon_slam = true }
+        local suka = { weapon_physcannon = true }
+        if IsValid(weap) then
+            if weap:Clip1() != -1 and !eblan[weap:GetClass()] and !suka[weap:GetClass()] then
+                self:RunJavascript([[document.getElementById("weaponpic").style.display = 'block';]])
+                self:RunJavascript([[document.getElementById("ammo").innerHTML = "| ]] .. tostring(weap:Clip1()) .. [[/]]..tostring(ply:GetAmmoCount( weap:GetPrimaryAmmoType() ))..[[";]])
+            elseif zalupa[weap:GetClass()] then
+                self:RunJavascript([[document.getElementById("weaponpic").style.display = 'block';]])
+                self:RunJavascript([[document.getElementById("ammo").innerHTML = "| ]] .. tostring(ply:GetAmmoCount( weap:GetPrimaryAmmoType()))..[[";]])
+            elseif eblan[weap:GetClass()] then
+                self:RunJavascript([[document.getElementById("weaponpic").style.display = 'block';]])
+                self:RunJavascript([[document.getElementById("ammo").innerHTML = "| ]] .. tostring(ply:GetAmmoCount( weap:GetSecondaryAmmoType()))..[[";]])
+            else
+                self:RunJavascript([[document.getElementById("weaponpic").style.display = 'none';]])
+                self:RunJavascript([[document.getElementById("ammo").innerHTML = "";]])
+            end
         end
     end
 end
